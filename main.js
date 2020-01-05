@@ -1,148 +1,198 @@
-var canvas;
-var ctx;
+let ctx;
 
-const FPS = 10;
-var interval = 1000 / FPS;
-var width, height;
+let width, height;
 
-var lastFrame = performance.now();
+let lastFrame = performance.now();
 
-var sheetRight = new Image();
-sheetRight.src = 'spritesheet_right.png';
+const direction = {
+  LEFT: "left",
+  RIGHT: "right",
+  UP: "up"
+};
 
-var sheetLeft = new Image();
-sheetLeft.src = 'spritesheet_left.png';
+const physics = {
+  acceleration: 0.4,
+  friction: 0.9,
+  gravity: 2,
+  initialJumpSpeed: -30
+};
 
-var input = {
-    37: false, //right
-    39: false, //left
-    38: false //up
-}
+const sprites = createSprites();
+const NUM_SPRITES_STANDING = 3;
+const NUM_SPRITES_RUNNING = 11;
+const NUM_SPRITES_JUMPING = 7;
+const ANIMATION_SPEED = 15; // How much vx it takes to go to the next frame
 
-var megaman = {
-    animationCounter: 0,
-    width: 40,
-    height: 46,
-    direction: true, //true = right, false = left
-    x: 300,
-    y: 300,
-    vx: 0,
-    vy: 0,
-    canJump: false
-}
+let input = {};
 
-//move
+let megaman = {
+  animationCounter: 0,
+  width: 40,
+  height: 46,
+  spriteDirection: direction.RIGHT,
+  x: 300,
+  y: 300,
+  vx: 0,
+  vy: 0,
+  canJump: false
+};
+
 function move(dt) {
+  // Choose sprite (don't care what happens if both left and right are pressed)
+  if (input[direction.RIGHT]) {
+    megaman.spriteDirection = direction.RIGHT;
+  } else if (input[direction.LEFT]) {
+    megaman.spriteDirection = direction.LEFT;
+  }
 
-    if (input[39])
-        megaman.direction = true;
+  // Jump
+  if (input[direction.UP] && megaman.canJump) {
+    megaman.canJump = false;
+    megaman.vy = physics.initialJumpSpeed;
+  }
 
-    if (input[37])
-        megaman.direction = false;
+  // Add acceleration
+  megaman.vx += input[direction.RIGHT] ? physics.acceleration * dt : 0;
+  megaman.vx -= input[direction.LEFT] ? physics.acceleration * dt : 0;
 
-    megaman.vx += input[39] ? 2 * dt : 0;
-    megaman.vx -= input[37] ? 2 * dt : 0;
+  // Add friction
+  megaman.vx *= physics.friction;
 
-    if (input[38] && megaman.canJump) {
-        megaman.canJump = false;
-        megaman.vy = -30;
-    }
+  // Move
+  megaman.y += megaman.vy;
+  megaman.x += megaman.vx;
 
-    //friction
-    megaman.vx *= 0.80;
-    megaman.vy *= 0.995;
-
-    //move
-    megaman.y += megaman.vy;
-    megaman.x += megaman.vx;
-
-    //midair
-    if (megaman.y + megaman.height < (height)) {
-        megaman.vy += 1.5 * dt;
-    } else {
-        megaman.vy = 0;
-        megaman.y = height - megaman.height;
-        megaman.canJump = true;
-    }
+  // Handle gravity/landing
+  if (megaman.y + megaman.height < height) {
+    // midair
+    megaman.vy += physics.gravity * dt; // gravity
+  } else {
+    // on the ground
+    megaman.vy = 0;
+    megaman.y = height - megaman.height;
+    megaman.canJump = true;
+  }
 }
 
-//draw
 function draw() {
+  let row, column; // of the relevant sprite in the spritesheet
+  // Row 0: standing, row 1: running, row 2: jumping
 
-    clearCanvas()
-
-    var sheet = megaman.direction ? sheetRight : sheetLeft;
-    var frame;
-
-    if (megaman.canJump && (input[37] || input[39])) { //player is on the ground running
-        var move = Math.abs(megaman.vx);
-        megaman.animationCounter += move;
-        frame = Math.round((megaman.animationCounter / 30) % 10);
-        ctx.drawImage(sheet, frame * 40, 46, 40, 46, megaman.x, megaman.y, 40, 46);
-
-    } else if (megaman.canJump) { //on the ground standing
-        megaman.animationCounter += 0.01
-        frame = Math.round((megaman.animationCounter) % 2);
-        ctx.drawImage(sheet, frame * 40, 0, 40, 46, megaman.x, megaman.y, 40, 46);
-
-    } else { //jumping
-        if (megaman.vy < 0) { //going up
-            var frame = 2 - Math.round(megaman.vy / -30 * 2);
-            ctx.drawImage(sheet, frame * 40, 92, 40, 46, megaman.x, megaman.y, 40, 46);
-
-        } else { //going down
-            if (megaman.vy < 5) {
-                frame = 2
-            } else {
-                frame = Math.round(((megaman.vy - 5) / 25) * 2) + 3;
-            }
-            ctx.drawImage(sheet, frame * 40, 92, 40, 46, megaman.x, megaman.y, 40, 46);
-        }
+  // Calculate row/column + update animationCounter if applicable
+  if (megaman.canJump) {
+    // player is on the ground
+    let numSprites;
+    if (input[direction.LEFT] || input[direction.RIGHT]) {
+      // running
+      megaman.animationCounter += Math.abs(megaman.vx);
+      row = 1;
+      numSprites = NUM_SPRITES_RUNNING;
+    } else {
+      // standing
+      megaman.animationCounter++;
+      row = 0;
+      numSprites = NUM_SPRITES_STANDING;
     }
+    column = Math.floor(
+      megaman.animationCounter / ANIMATION_SPEED % numSprites
+    );
+  } else {
+    // player is in the air
+    row = 2;
+    column = Math.min(
+      Math.floor(
+        (megaman.vy - physics.initialJumpSpeed) /
+          (-2 * physics.initialJumpSpeed / NUM_SPRITES_JUMPING)
+      ),
+      NUM_SPRITES_JUMPING - 1
+    );
+  }
+
+  // Draw
+  clearCanvas();
+  ctx.drawImage(
+    sprites[megaman.spriteDirection],
+    column * megaman.width,
+    row * megaman.height,
+    megaman.width,
+    megaman.height,
+    megaman.x,
+    megaman.y,
+    megaman.width,
+    megaman.height
+  );
 }
 
-//clear canvas
 function clearCanvas() {
-    ctx.fillStyle = 'black';
+    // ctx.fillStyle = 'black';
+    ctx.fillStyle = '#00000015';
     ctx.fillRect(0, 0, width, height);
 }
 
 function initInput() {
-    document.addEventListener('keydown', function (event) {
-        input[event.keyCode] = true;
-    });
-
-    document.addEventListener('keyup', function (event) {
-        input[event.keyCode] = false;
-    });
+  document.addEventListener("keydown", keyHandler);
+  document.addEventListener("keyup", keyHandler);
 }
 
 function gameLoop(time) {
+  // Calculate delta time
+  let dt = time - lastFrame;
+  lastFrame = time;
 
-    //calculate delta time
-    var dt = time - lastFrame
-    lastFrame = time;
+  // Normalize
+  dt /= 16;
 
-    dt /= 16; //normalize
+  move(dt);
+  draw();
 
-    move(dt);
-
-    draw();
-
-    window.requestAnimationFrame(gameLoop)
+  window.requestAnimationFrame(gameLoop);
 }
 
 function init() {
-    canvas = document.getElementById('canvas');
-    width = canvas.width;
-    height = canvas.height;
-    ctx = canvas.getContext('2d');
-
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, 600, 600);
-
-    initInput();
-
-    gameLoop();
+  let canvas = document.getElementById("canvas");
+  width = canvas.width;
+  height = canvas.height;
+  ctx = canvas.getContext("2d");
+  initInput();
+  clearCanvas();
+  gameLoop(lastFrame);
 }
 
+function makeImage(src) {
+  let result = new Image();
+  result.src = src;
+  return result;
+}
+
+function createSprites() {
+  let result = {};
+  result[direction.LEFT] = makeImage("spritesheet_left.png");
+  result[direction.RIGHT] = makeImage("spritesheet_right.png");
+  return result;
+}
+
+function keyEventToDirection(event) {
+  let result;
+  switch (event.key) {
+    case "ArrowUp":
+    case "w":
+      result = direction.UP;
+      break;
+    case "ArrowLeft":
+    case "a":
+      result = direction.LEFT;
+      break;
+    case "ArrowRight":
+    case "d":
+      result = direction.RIGHT;
+      break;
+  }
+  return result;
+}
+
+function keyHandler(event) {
+  let direction = keyEventToDirection(event);
+  if (direction) {
+    input[direction] = event.type === "keydown";
+  }
+}
