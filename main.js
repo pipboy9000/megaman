@@ -17,6 +17,10 @@ const physics = {
     initialJumpSpeed: -30
 };
 
+const mouse = {
+    x: 0, y: 0, dx: 0, dy: 0
+}
+
 const sprites = createSprites();
 const NUM_SPRITES_STANDING = 3;
 const NUM_SPRITES_RUNNING = 11;
@@ -34,7 +38,10 @@ let megaman = {
     y: 300,
     vx: 0,
     vy: 0,
-    canJump: false
+    canJump: false,
+    aim: 0,
+    gunOffsetX: 30,
+    gunOffsetY: 30
 };
 
 function move(dt) {
@@ -72,6 +79,10 @@ function move(dt) {
         megaman.y = height - megaman.height;
         megaman.canJump = true;
     }
+
+    //mouse aim
+    megaman.aim = Math.atan2(mouse.y - (megaman.y + megaman.gunOffsetY), mouse.x - (megaman.x + megaman.gunOffsetX));
+
 }
 
 function draw() {
@@ -121,17 +132,42 @@ function draw() {
         megaman.width,
         megaman.height
     );
+
+    ctx.strokeStyle = "white";
+
+    //draw aim
+    ctx.beginPath();
+    ctx.moveTo(megaman.x + megaman.gunOffsetX, megaman.y + megaman.gunOffsetY);
+    ctx.lineTo(megaman.x + megaman.gunOffsetX + Math.cos(megaman.aim) * 50, megaman.y + megaman.gunOffsetY + Math.sin(megaman.aim) * 50);
+    ctx.stroke();
 }
 
 function clearCanvas() {
     // ctx.fillStyle = 'black';
-    ctx.fillStyle = '#00000015';
+    ctx.fillStyle = '#000000ff';
     ctx.fillRect(0, 0, width, height);
+}
+
+function onMouseMove(e) {
+
+    var rect = canvas.getBoundingClientRect();
+
+    let x = (e.clientX - rect.left) / (rect.right - rect.left) * canvas.width;
+    let y = (e.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height;
+
+    debugger;
+    mouse.dx = x - mouse.x;
+    mouse.dy = y - mouse.y;
+    mouse.x = x;
+    mouse.y = y;
+
+    console.log(mouse)
 }
 
 function initInput() {
     document.addEventListener("keydown", keyHandler);
     document.addEventListener("keyup", keyHandler);
+    canvas.addEventListener("mousemove", onMouseMove)
 }
 
 function gameLoop(time) {
