@@ -95,10 +95,10 @@ export function draw() {
     ctx.strokeStyle = "white";
 
     //draw aim
-    ctx.beginPath();
-    ctx.moveTo(x + gunOffsetX, y + gunOffsetY);
-    ctx.lineTo(x + gunOffsetX + Math.cos(aim) * 50, y + gunOffsetY + Math.sin(aim) * 50);
-    ctx.stroke();
+    // ctx.beginPath();
+    // ctx.moveTo(x + gunOffsetX, y + gunOffsetY);
+    // ctx.lineTo(x + gunOffsetX + Math.cos(aim) * 50, y + gunOffsetY + Math.sin(aim) * 50);
+    // ctx.stroke();
 }
 
 export function move(dt) {

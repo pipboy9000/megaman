@@ -2,10 +2,10 @@ import { ctx } from './canvas.js';
 
 const lasers = [];
 
-const LASER_SPEED = 30;
+const LASER_SPEED = 10;
 
 function init() {
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < 25; i++) {
         lasers[i] = {
             active: false,
             x: 0,
@@ -50,9 +50,29 @@ export function move(dt) {
 export function draw() {
     lasers.forEach(l => {
         if (l.active) {
+
+            ctx.lineWidth = 3 + l.age % 5;
+            ctx.strokeStyle = "red"
+
             ctx.beginPath();
             ctx.moveTo(l.x, l.y);
-            ctx.lineTo(l.x + Math.cos(l.dir) * 10, l.y + Math.sin(l.dir) * 10);
+            ctx.lineTo(l.x + Math.cos(l.dir) * 25, l.y + Math.sin(l.dir) * 25);
+            ctx.stroke();
+
+            ctx.lineWidth = 2 + l.age % 3;
+            ctx.strokeStyle = "orange"
+
+            ctx.beginPath();
+            ctx.moveTo(l.x, l.y);
+            ctx.lineTo(l.x + Math.cos(l.dir) * 25, l.y + Math.sin(l.dir) * 25);
+            ctx.stroke();
+
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "white"
+
+            ctx.beginPath();
+            ctx.moveTo(l.x, l.y);
+            ctx.lineTo(l.x + Math.cos(l.dir) * 25, l.y + Math.sin(l.dir) * 25);
             ctx.stroke();
         }
     })
