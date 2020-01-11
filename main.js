@@ -1,7 +1,7 @@
 import * as megaman from './megaman.js';
 import * as projectiles from './projectiles.js';
 import * as level from "./level.js";
-import { clearCanvas } from './canvas.js';
+import * as canvas from './canvas.js';
 
 let lastFrame = performance.now();
 
@@ -13,10 +13,13 @@ function gameLoop(time) {
     // Normalize
     dt /= 16;
 
+    //camera
+    canvas.draw();
+
     megaman.move(1);
     projectiles.move(1);
 
-    clearCanvas();
+    canvas.clearCanvas();
 
     megaman.draw();
     projectiles.draw();

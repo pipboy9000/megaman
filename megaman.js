@@ -172,6 +172,9 @@ export function move(dt) {
     x = newX;
     y = newY;
 
+    //zoom camera
+    canvas.center(x, y);
+
 
     //mouse aim
     aim = Math.atan2(mouse.y - (y + gunOffsetY), mouse.x - (x + gunOffsetX));
