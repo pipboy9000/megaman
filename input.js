@@ -1,5 +1,7 @@
+import { camPosX, camPosY, halfWidth, halfHeight } from './canvas.js';
+
 export const mouse = {
-    x: 0, y: 0, dx: 0, dy: 0, leftClick: false, rightClick: false
+    x: 0, y: 0, dx: 0, dy: 0, leftClick: false, rightClick: false, screenX: 0, screenY: 0
 }
 
 export const keyboard = {};
@@ -12,10 +14,13 @@ export const direction = {
 
 function onMouseMove(e) {
 
-    var rect = canvas.getBoundingClientRect();
+    let rect = canvas.getBoundingClientRect();
 
-    let x = (e.clientX - rect.left) / (rect.right - rect.left) * canvas.width;
-    let y = (e.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height;
+    mouse.screenX = ((e.clientX - rect.left) / (rect.right - rect.left) * canvas.width);
+    mouse.screenY = ((e.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height)
+
+    let x = mouse.screenX + camPosX - halfWidth;
+    let y = mouse.screenY + camPosY - halfHeight;
 
     mouse.dx = x - mouse.x;
     mouse.dy = y - mouse.y;

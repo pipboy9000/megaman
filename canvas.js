@@ -2,10 +2,10 @@ export var ctx;
 
 export var width, height, halfWidth, halfHeight;
 
-var camPosX = 0;
+export var camPosX = 0;
 var targetCamPosX = 0;
 
-var camPosY = 0;
+export var camPosY = 0;
 var targetCamPosY = 0;
 
 export function clearCanvas() {
