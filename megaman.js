@@ -2,6 +2,9 @@ import { mouse, keyboard, direction } from './input.js';
 import * as canvas from './canvas.js';
 import { ctx } from './canvas.js';
 import * as projectiles from './projectiles.js';
+import * as level from './level.js';
+import * as lines from './lines.js';
+
 
 var animationCounter = 0;
 var width = 40;
@@ -28,9 +31,14 @@ const RECOIL_TIME = 5;
 const physics = {
     acceleration: 1.5,
     friction: 0.8,
-    gravity: 2,
-    initialJumpSpeed: -30
+    gravity: 1,
+    initialJumpSpeed: -15
 };
+
+//collision circle
+const colRad = 20;
+const colOffsetX = 20;
+const colOffsetY = 30;
 
 function makeImage(src) {
     let result = new Image();
@@ -92,13 +100,22 @@ export function draw() {
         height
     );
 
-    ctx.strokeStyle = "white";
-
     //draw aim
+
+    // ctx.strokeStyle = "white";
     // ctx.beginPath();
     // ctx.moveTo(x + gunOffsetX, y + gunOffsetY);
     // ctx.lineTo(x + gunOffsetX + Math.cos(aim) * 50, y + gunOffsetY + Math.sin(aim) * 50);
     // ctx.stroke();
+
+    //draw collision circle;
+
+    ctx.strokeStyle = "green";
+    ctx.lineWidth = 2;
+
+    ctx.beginPath();
+    ctx.arc(x + colOffsetX, y + colOffsetY, colRad, 0, Math.PI * 2);
+    ctx.stroke();
 }
 
 export function move(dt) {
@@ -122,20 +139,39 @@ export function move(dt) {
     // Add friction
     vx *= physics.friction;
 
+    // gravity
+    vy += physics.gravity * dt;
+
     // Move
     y += vy;
     x += vx;
 
-    // Handle gravity/landing
-    if (y + height < canvas.height) {
-        // midair
-        vy += physics.gravity * dt; // gravity
-    } else {
-        // on the ground
+    //check wall collision
+    let newX = x;
+    let newY = y;
+
+    canJump = false;
+
+    let moveBack = level.checkCol(newX + colOffsetX, newY + colOffsetY, vx, vy, colRad);
+    let iterations = 0;
+    while ((moveBack.x != 0 || moveBack.y != 0) && iterations < 5) {
+
+        iterations++;
+
+        newX += moveBack.x;
+        newY += moveBack.y;
+
+        moveBack = level.checkCol(newX + colOffsetX, newY + colOffsetY, vx, vy, colRad);
+    }
+
+    if (newY < y) {
         vy = 0;
-        y = canvas.height - height;
         canJump = true;
     }
+
+    x = newX;
+    y = newY;
+
 
     //mouse aim
     aim = Math.atan2(mouse.y - (y + gunOffsetY), mouse.x - (x + gunOffsetX));

@@ -2,7 +2,7 @@ import { ctx } from './canvas.js';
 
 const lasers = [];
 
-const LASER_SPEED = 10;
+const LASER_SPEED = 15;
 
 function init() {
     for (var i = 0; i < 25; i++) {
@@ -51,7 +51,9 @@ export function draw() {
     lasers.forEach(l => {
         if (l.active) {
 
-            ctx.lineWidth = 3 + l.age % 5;
+            ctx.lineJoin = "round";
+
+            ctx.lineWidth = 7;
             ctx.strokeStyle = "red"
 
             ctx.beginPath();
@@ -59,7 +61,7 @@ export function draw() {
             ctx.lineTo(l.x + Math.cos(l.dir) * 25, l.y + Math.sin(l.dir) * 25);
             ctx.stroke();
 
-            ctx.lineWidth = 2 + l.age % 3;
+            ctx.lineWidth = 5 + l.age % 3;
             ctx.strokeStyle = "orange"
 
             ctx.beginPath();
@@ -67,7 +69,7 @@ export function draw() {
             ctx.lineTo(l.x + Math.cos(l.dir) * 25, l.y + Math.sin(l.dir) * 25);
             ctx.stroke();
 
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 3;
             ctx.strokeStyle = "white"
 
             ctx.beginPath();
