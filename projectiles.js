@@ -36,8 +36,8 @@ export function shootLaser(x, y, dir) {
 export function move(dt) {
     lasers.forEach(l => {
         if (l.active) {
-            l.x += Math.cos(l.dir) * LASER_SPEED * dt;
-            l.y += Math.sin(l.dir) * LASER_SPEED * dt;
+            l.x += Math.cos(l.dir) * LASER_SPEED * dt * (l.age / 30);
+            l.y += Math.sin(l.dir) * LASER_SPEED * dt * (l.age / 30)
             l.age += dt;
 
             if (l.age > 50) {
