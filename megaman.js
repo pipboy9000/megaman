@@ -164,13 +164,21 @@ export function move(dt) {
         moveBack = level.checkCol(newX + colOffsetX, newY + colOffsetY, vx, vy, colRad);
     }
 
+    let upVec = {x:0,y:-1};
+
+    let dp = lines.dotProduct(lines.normalize(upVec), lines.normalize(moveBack));
+
+    console.log(dp);
+
     if (newY < y) {
         vy = 0;
         canJump = true;
+        y = newY;
+    } else {
+        x = newX;
+        y = newY;
     }
 
-    x = newX;
-    y = newY;
 
     //zoom camera
     canvas.center(x, y);
