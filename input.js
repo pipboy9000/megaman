@@ -52,17 +52,17 @@ function onMouseUp(event) {
 
 function keyEventToDirection(event) {
     let result;
-    switch (event.key) {
+    switch (event.code) {
         case "ArrowUp":
-        case "w":
+        case "KeyW":
             result = direction.UP;
             break;
         case "ArrowLeft":
-        case "a":
+        case "KeyA":
             result = direction.LEFT;
             break;
         case "ArrowRight":
-        case "d":
+        case "KeyD":
             result = direction.RIGHT;
             break;
     }
