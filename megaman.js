@@ -108,8 +108,8 @@ export function draw() {
     // ctx.lineTo(x + gunOffsetX + Math.cos(aim) * 50, y + gunOffsetY + Math.sin(aim) * 50);
     // ctx.stroke();
 
-    //draw collision circle;
 
+    //draw collision circle;
     ctx.strokeStyle = "green";
     ctx.lineWidth = 2;
 
@@ -164,16 +164,22 @@ export function move(dt) {
         moveBack = level.checkCol(newX + colOffsetX, newY + colOffsetY, vx, vy, colRad);
     }
 
-    let upVec = {x:0,y:-1};
+    let upVec = { x: 0, y: -1 };
 
     let dp = lines.dotProduct(lines.normalize(upVec), lines.normalize(moveBack));
 
     console.log(dp);
 
-    if (newY < y) {
+    if (newY < y) { //are we on a floor?
         vy = 0;
         canJump = true;
         y = newY;
+
+        //after moving the player up we need to check again for wall collision
+        moveBack = level.checkCol(x + colOffsetX, y + colOffsetY, vx, vy, colRad);
+        x += moveBack.x;
+        y += moveBack.y;
+
     } else {
         x = newX;
         y = newY;
