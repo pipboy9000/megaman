@@ -118,6 +118,10 @@ function isAbove(line, x, y) {
   return getX(line, y) <= x;
 }
 
+export function getLength(vec) {
+  return Math.sqrt(vec.x * vec.x + vec.y * vec.y);
+}
+
 export function getIntersection(line1, line2) {
   //lines ar orthogonal
   if (line1.m === Infinity && line2.m === 0) {
