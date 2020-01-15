@@ -1,4 +1,6 @@
-export var ctx;
+import * as input from './input.js';
+
+export var ctx, canvas;
 
 export var width, height, halfWidth, halfHeight;
 
@@ -19,8 +21,12 @@ export function center(x, y) {
 }
 
 export function draw() {
-    camPosX += (targetCamPosX - camPosX) / 5;
-    camPosY += (targetCamPosY - camPosY) / 5;
+    let dx = (targetCamPosX - camPosX) / 5;
+    let dy = (targetCamPosY - camPosY) / 5;
+    camPosX += dx;
+    camPosY += dy;
+
+    input.translate(dx, dy);
 
     ctx.setTransform(
         1,
@@ -33,7 +39,7 @@ export function draw() {
 }
 
 function init() {
-    let canvas = document.getElementById("canvas");
+    canvas = document.getElementById("canvas");
     width = canvas.width;
     height = canvas.height;
     halfWidth = canvas.width / 2;

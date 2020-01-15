@@ -152,7 +152,7 @@ export function move(dt) {
 
     canJump = false;
 
-    let moveBack = level.checkCol(newX + colOffsetX, newY + colOffsetY, vx, vy, colRad);
+    let moveBack = level.checkCol(newX + colOffsetX, newY + colOffsetY, colRad);
     let iterations = 0;
     while ((moveBack.x != 0 || moveBack.y != 0) && iterations < 5) {
 
@@ -161,7 +161,7 @@ export function move(dt) {
         newX += moveBack.x;
         newY += moveBack.y;
 
-        moveBack = level.checkCol(newX + colOffsetX, newY + colOffsetY, vx, vy, colRad);
+        moveBack = level.checkCol(newX + colOffsetX, newY + colOffsetY, colRad);
     }
 
     let upVec = { x: 0, y: -1 };
@@ -176,7 +176,7 @@ export function move(dt) {
         y = newY;
 
         //after moving the player up we need to check again for wall collision
-        moveBack = level.checkCol(x + colOffsetX, y + colOffsetY, vx, vy, colRad);
+        moveBack = level.checkCol(x + colOffsetX, y + colOffsetY, colRad);
         x += moveBack.x;
         y += moveBack.y;
 

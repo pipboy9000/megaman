@@ -12,6 +12,11 @@ export const direction = {
     UP: "up"
 };
 
+export function translate(dx, dy) {
+    mouse.x += dx;
+    mouse.y += dy;
+}
+
 function onMouseMove(e) {
 
     let rect = canvas.getBoundingClientRect();

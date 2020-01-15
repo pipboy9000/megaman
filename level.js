@@ -58,14 +58,10 @@ var walls = [
     }
 ];
 
-export function checkCol(x, y, vx, vy, rad) {
+export function checkCol(x, y, rad) {
     // var dp;
     var radSqr = rad * rad;
     var colLine;
-    var n = lines.normalize({
-        x: vx,
-        y: vy
-    }); //normalized vx,vy
     var colPoint;
     var colPoints = [];
     var res = { x: 0, y: 0 };
