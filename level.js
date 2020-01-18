@@ -58,16 +58,23 @@ var walls = [
     }
 ];
 
-export function checkCol(x, y, rad) {
+// gravity vector is used to determine if the wall we hit is considered a floor
+export function checkCol(x, y, rad, gravityVec) {
+
     // var dp;
     var radSqr = rad * rad;
     var colLine;
     var colPoint;
     var colPoints = [];
-    var res = { x: 0, y: 0 };
+    var res = { x: 0, y: 0, isFloor: false };
 
     //check walls first
+    // for (let i = 0; i < walls.length; i++) {
+    //     let wall = walls[i];
+
     walls.forEach(wall => {
+
+        //line from the center of the player perpendicular to the current wall with length of rad
         colLine = lines.getLine(
             x,
             y,
@@ -76,24 +83,46 @@ export function checkCol(x, y, rad) {
         );
 
         colPoint = lines.getIntersection(wall, colLine);
+
+        //is this line intersects with a wall?
         if (colPoint) {
-            lines.drawPoint(colPoint);
-            var moveBackX = colPoint.x - colLine.x2;
-            var moveBackY = colPoint.y - colLine.y2;
-            colPoints.push({
-                x: moveBackX,
-                y: moveBackY
-            });
+
+            let dp = lines.dotProduct(wall.normal, gravityVec);
+
+            //is this wall a floor?
+            if (dp < -0.85) {
+
+                //to calculate next position we need to make a new line from colLine.x2,colLine.x2 in the opposite direction of gravity
+                //make sure gravity vec is normalized
+                let newColLine = lines.getLine(colLine.x2, colLine.y2, colLine.x2 + (-gravityVec.x * rad), colLine.y2 + (-gravityVec.y * rad))
+                let newColPoint = lines.getIntersection(wall, newColLine);
+
+                lines.drawLine(newColLine, 'red', 3)
+
+                if (newColPoint) {
+                    var moveBackX = newColPoint.x - newColLine.x1;
+                    var moveBackY = newColPoint.y - newColLine.y1;
+
+                    res.isFloor = true;
+
+                    colPoints.push({
+                        x: moveBackX,
+                        y: moveBackY
+                    });
+                }
+
+            } else {
+
+                var moveBackX = colPoint.x - colLine.x2;
+                var moveBackY = colPoint.y - colLine.y2;
+
+                colPoints.push({
+                    x: moveBackX,
+                    y: moveBackY
+                });
+            }
         }
     });
-
-    if (colPoints.length > 0) {
-        colPoints.forEach(p => {
-            res.x += p.x;
-            res.y += p.y;
-        });
-        return res;
-    }
 
     //check vertices
     walls.forEach(wall => {
@@ -118,8 +147,11 @@ export function checkCol(x, y, rad) {
             res.y += p.y;
         });
     }
+
     return res;
 }
+
+
 
 export function draw() {
     walls.forEach(wall => {

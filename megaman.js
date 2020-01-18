@@ -142,6 +142,8 @@ export function move(dt) {
     // gravity
     vy += physics.gravity * dt;
 
+    let gravityVec = { x: 0, y: 1 };
+
     // Move
     y += vy;
     x += vx;
@@ -152,7 +154,7 @@ export function move(dt) {
 
     canJump = false;
 
-    let moveBack = level.checkCol(newX + colOffsetX, newY + colOffsetY, colRad);
+    let moveBack = level.checkCol(newX + colOffsetX, newY + colOffsetY, colRad, gravityVec);
     let iterations = 0;
     while ((moveBack.x != 0 || moveBack.y != 0) && iterations < 5) {
 
@@ -161,32 +163,18 @@ export function move(dt) {
         newX += moveBack.x;
         newY += moveBack.y;
 
-        moveBack = level.checkCol(newX + colOffsetX, newY + colOffsetY, colRad);
+        if (moveBack.isFloor) {
+            vy = 0;
+            canJump = true;
+        }
+
+        moveBack = level.checkCol(newX + colOffsetX, newY + colOffsetY, colRad, gravityVec);
     }
 
-    let upVec = { x: 0, y: -1 };
+    x = newX;
+    y = newY;
 
-    let dp = lines.dotProduct(lines.normalize(upVec), lines.normalize(moveBack));
-
-    console.log(dp);
-
-    if (newY < y) { //are we on a floor?
-        vy = 0;
-        canJump = true;
-        y = newY;
-
-        //after moving the player up we need to check again for wall collision
-        moveBack = level.checkCol(x + colOffsetX, y + colOffsetY, colRad);
-        x += moveBack.x;
-        y += moveBack.y;
-
-    } else {
-        x = newX;
-        y = newY;
-    }
-
-
-    //zoom camera
+    //zoom center
     canvas.center(x, y);
 
     //mouse aim

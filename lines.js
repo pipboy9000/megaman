@@ -5,10 +5,10 @@ export function getLine(x1, y1, x2, y2) {
   var b = y1 - m * x1;
   var midX = x1 + (x2 - x1) / 2;
   var midY = y1 + (y2 - y1) / 2;
-  var normal = {
+  var normal = normalize({
     x: -(y2 - y1),
     y: x2 - x1
-  };
+  });
   var vec = {
     x: x2 - x1,
     y: y2 - y1
