@@ -36,7 +36,7 @@ const physics = {
 };
 
 //collision circle
-const colRad = 20;
+const colRad = 30;
 const colOffsetX = 20;
 const colOffsetY = 30;
 
@@ -77,14 +77,14 @@ export function draw() {
         );
     } else {
         // player is in the air
-        row = 2;
-        column = Math.min(
-            Math.floor(
-                (vy - physics.initialJumpSpeed) /
-                (-2 * physics.initialJumpSpeed / NUM_SPRITES_JUMPING)
-            ),
-            NUM_SPRITES_JUMPING - 1
-        );
+        // row = 2;
+        // column = Math.min(
+        //     Math.floor(
+        //         (vy - physics.initialJumpSpeed) /
+        //         (-2 * physics.initialJumpSpeed / NUM_SPRITES_JUMPING)
+        //     ),
+        //     NUM_SPRITES_JUMPING - 1
+        // );
     }
 
     // Draw
@@ -138,6 +138,7 @@ export function move(dt) {
 
     // Add friction
     vx *= physics.friction;
+    // if (Math.abs(vx) < 0.01) vx = 0;
 
     // gravity
     vy += physics.gravity * dt;
@@ -148,31 +149,35 @@ export function move(dt) {
     y += vy;
     x += vx;
 
+    let vLength = lines.getLength({ x: vx, y: vy });
+
     //check wall collision
     let newX = x;
     let newY = y;
 
-    canJump = false;
+    // canJump = false;
 
-    let moveBack = level.checkCol(newX + colOffsetX, newY + colOffsetY, colRad, gravityVec);
+    let moveBack = level.checkCol(x + colOffsetX, y + colOffsetY, colRad, gravityVec);
     let iterations = 0;
-    while ((moveBack.x != 0 || moveBack.y != 0) && iterations < 5) {
+    while (moveBack && (moveBack.x != 0 || moveBack.y != 0) && iterations < 30) {
 
         iterations++;
 
-        newX += moveBack.x;
-        newY += moveBack.y;
+        x += moveBack.x;
+        y += moveBack.y;
 
         if (moveBack.isFloor) {
             vy = 0;
             canJump = true;
         }
 
-        moveBack = level.checkCol(newX + colOffsetX, newY + colOffsetY, colRad, gravityVec);
+        moveBack = level.checkCol(x + colOffsetX, y + colOffsetY, colRad, gravityVec);
     }
 
-    x = newX;
-    y = newY;
+    console.log(iterations, 'canJump: ' + canJump)
+
+    // x = newX;
+    // y = newY;
 
     //zoom center
     canvas.center(x, y);
