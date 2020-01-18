@@ -69,10 +69,10 @@ export function checkCol(x, y, rad, gravityVec) {
     var res = { x: 0, y: 0, isFloor: false };
 
     //check walls first
-    for (let i = 0; i < walls.length; i++) {
-        let wall = walls[i];
+    // for (let i = 0; i < walls.length; i++) {
+    //     let wall = walls[i];
 
-        // walls.forEach(wall => {
+    walls.forEach(wall => {
 
         //line from the center of the player perpendicular to the current wall with length of rad
         colLine = lines.getLine(
@@ -94,7 +94,7 @@ export function checkCol(x, y, rad, gravityVec) {
 
                 //to calculate next position we need to make a new line from colLine.x2,colLine.x2 in the opposite direction of gravity
                 //make sure gravity vec is normalized
-                let newColLine = lines.getLine(colLine.x2, colLine.y2, colLine.x2 + (-gravityVec.x * rad * 3), colLine.y2 + (-gravityVec.y * rad * 3))
+                let newColLine = lines.getLine(colLine.x2, colLine.y2, colLine.x2 + (-gravityVec.x * rad), colLine.y2 + (-gravityVec.y * rad))
                 let newColPoint = lines.getIntersection(wall, newColLine);
 
                 if (newColPoint) {
@@ -120,7 +120,7 @@ export function checkCol(x, y, rad, gravityVec) {
                 });
             }
         }
-    };
+    });
 
     //check vertices
     // for (let i = 0; i < walls.length; i++) {

@@ -26,7 +26,7 @@ const NUM_SPRITES_RUNNING = 11;
 const NUM_SPRITES_JUMPING = 7;
 const ANIMATION_SPEED = 15; // How much vx it takes to go to the next frame
 
-const RECOIL_TIME = 5;
+const RECOIL_TIME = 3;
 
 const physics = {
     acceleration: 1.5,
@@ -36,9 +36,9 @@ const physics = {
 };
 
 //collision circle
-const colRad = 20;
+const colRad = 30;
 const colOffsetX = 20;
-const colOffsetY = 30;
+const colOffsetY = 15;
 
 function makeImage(src) {
     let result = new Image();
@@ -141,9 +141,11 @@ export function move(dt) {
     // if (Math.abs(vx) < 0.01) vx = 0;
 
     // gravity
-    vy += physics.gravity * dt;
+    let gravityVec = { x: 0.0001, y: 1 };
 
-    let gravityVec = { x: 0.001, y: 1 };
+    vx += physics.gravity * dt * gravityVec.x;
+    vy += physics.gravity * dt * gravityVec.y;
+
 
     // Move
     y += vy;
@@ -173,8 +175,6 @@ export function move(dt) {
 
         moveBack = level.checkCol(x + colOffsetX, y + colOffsetY, colRad, gravityVec);
     }
-
-    console.log(iterations, 'canJump: ' + canJump)
 
     // x = newX;
     // y = newY;
