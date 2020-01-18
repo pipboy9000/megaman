@@ -36,7 +36,7 @@ const physics = {
 };
 
 //collision circle
-const colRad = 30;
+const colRad = 20;
 const colOffsetX = 20;
 const colOffsetY = 30;
 
@@ -77,14 +77,14 @@ export function draw() {
         );
     } else {
         // player is in the air
-        // row = 2;
-        // column = Math.min(
-        //     Math.floor(
-        //         (vy - physics.initialJumpSpeed) /
-        //         (-2 * physics.initialJumpSpeed / NUM_SPRITES_JUMPING)
-        //     ),
-        //     NUM_SPRITES_JUMPING - 1
-        // );
+        row = 2;
+        column = Math.min(
+            Math.floor(
+                (vy - physics.initialJumpSpeed) /
+                (-2 * physics.initialJumpSpeed / NUM_SPRITES_JUMPING)
+            ),
+            NUM_SPRITES_JUMPING - 1
+        );
     }
 
     // Draw
@@ -143,7 +143,7 @@ export function move(dt) {
     // gravity
     vy += physics.gravity * dt;
 
-    let gravityVec = { x: 0, y: 1 };
+    let gravityVec = { x: 0.001, y: 1 };
 
     // Move
     y += vy;
