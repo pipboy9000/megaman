@@ -122,6 +122,12 @@ export function draw() {
     ctx.beginPath();
     ctx.arc(x + colOffsetX, y + colOffsetY, colRad, 0, Math.PI * 2);
     ctx.stroke();
+
+    //fuel line
+    ctx.beginPath();
+    ctx.fillStyle = "red";
+    ctx.rect(x + 5, y + 50, jetpackFuel / 2, 5);
+    ctx.fill();
 }
 
 export function move(dt) {
