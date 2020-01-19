@@ -40,6 +40,8 @@ export function draw() {
 
 function init() {
     canvas = document.getElementById("canvas");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
     width = canvas.width;
     height = canvas.height;
     halfWidth = canvas.width / 2;

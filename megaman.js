@@ -19,6 +19,7 @@ var aim = 0;
 var gunOffsetX = 30;
 var gunOffsetY = 30;
 var recoil = 0;
+var jetpackPush = { x: 0, y: 0 }
 
 const sprites = createSprites();
 const NUM_SPRITES_STANDING = 3;
@@ -28,6 +29,9 @@ const ANIMATION_SPEED = 15; // How much vx it takes to go to the next frame
 
 const RECOIL_TIME = 3;
 
+const JETPACK_VEC = { x: 0, y: -0.3 };
+const JETPACK_MAX = 1.3;
+
 const physics = {
     acceleration: 1.5,
     friction: 0.8,
@@ -36,9 +40,9 @@ const physics = {
 };
 
 //collision circle
-const colRad = 30;
+const colRad = 25;
 const colOffsetX = 20;
-const colOffsetY = 15;
+const colOffsetY = 20;
 
 function makeImage(src) {
     let result = new Image();
@@ -119,6 +123,10 @@ export function draw() {
 }
 
 export function move(dt) {
+
+    // gravity
+    let gravityVec = { x: 0.0001, y: 1 }; //i dunno why but if x is zero then colCheck fails sometimes
+
     // Choose sprite (don't care what happens if both left and right are pressed)
     if (keyboard[direction.RIGHT]) {
         spriteDirection = direction.RIGHT;
@@ -136,16 +144,36 @@ export function move(dt) {
     vx += keyboard[direction.RIGHT] ? physics.acceleration * dt : 0;
     vx -= keyboard[direction.LEFT] ? physics.acceleration * dt : 0;
 
-    // Add friction
-    vx *= physics.friction;
-    // if (Math.abs(vx) < 0.01) vx = 0;
+    //jet pack
+    if (mouse.rightClick) {
+        canJump = false;
+        jetpackPush.x += mouse.rightClick ? JETPACK_VEC.x * dt : 0;
+        jetpackPush.y += mouse.rightClick ? JETPACK_VEC.y * dt : 0;
+        if (lines.getLength(jetpackPush) >= JETPACK_MAX) {
+            jetpackPush = lines.normalize(jetpackPush);
+            jetpackPush.x *= JETPACK_MAX;
+            jetpackPush.y *= JETPACK_MAX;
+        }
+        jetpackPush.x *= physics.friction;
+        jetpackPush.y *= physics.friction;
+        vx += jetpackPush.x;
+        vy += jetpackPush.y;
+    }
 
-    // gravity
-    let gravityVec = { x: 0.0001, y: 1 };
-
+    //gravity
     vx += physics.gravity * dt * gravityVec.x;
     vy += physics.gravity * dt * gravityVec.y;
 
+    //friction
+    vx *= physics.friction;
+
+    //limit overall movement for 1 frame
+    let maxMove = colRad;
+    if (lines.getLength({ x: vx, y: vy }) > maxMove) {
+        let nv = lines.normalize({ x: vx, y: vy });
+        vx = nv.x * maxMove;
+        vy = nv.y * maxMove;
+    }
 
     // Move
     y += vy;

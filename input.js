@@ -40,6 +40,8 @@ function onMouseDown(event) {
             break;
         case 3:
             mouse.rightClick = true;
+            // event.preventDefault();
+            // return false;
             break;
     }
 }
@@ -51,8 +53,15 @@ function onMouseUp(event) {
             break;
         case 3:
             mouse.rightClick = false;
+            // event.preventDefault();
             break;
     }
+}
+
+function onRightClick(event) {
+    mouse.rightClick = false;
+    event.preventDefault();
+    return false;
 }
 
 function keyEventToDirection(event) {
@@ -87,6 +96,7 @@ function init() {
     canvas.addEventListener("mousemove", onMouseMove)
     canvas.addEventListener("mousedown", onMouseDown)
     canvas.addEventListener("mouseup", onMouseUp)
+    canvas.addEventListener("contextmenu", onRightClick)
 }
 
 init();
