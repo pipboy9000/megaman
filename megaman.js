@@ -20,6 +20,7 @@ var gunOffsetX = 30;
 var gunOffsetY = 30;
 var recoil = 0;
 var jetpackPush = { x: 0, y: 0 }
+var jetpackFuel = 100;
 
 const sprites = createSprites();
 const NUM_SPRITES_STANDING = 3;
@@ -31,6 +32,7 @@ const RECOIL_TIME = 3;
 
 const JETPACK_VEC = { x: 0, y: -0.3 };
 const JETPACK_MAX = 1.3;
+const JETPACK_FUEL_FULL = 100;
 
 const physics = {
     acceleration: 1.5,
@@ -145,7 +147,7 @@ export function move(dt) {
     vx -= keyboard[direction.LEFT] ? physics.acceleration * dt : 0;
 
     //jet pack
-    if (mouse.rightClick) {
+    if (mouse.rightClick && jetpackFuel > 0) {
         canJump = false;
         jetpackPush.x += mouse.rightClick ? JETPACK_VEC.x * dt : 0;
         jetpackPush.y += mouse.rightClick ? JETPACK_VEC.y * dt : 0;
@@ -158,7 +160,14 @@ export function move(dt) {
         jetpackPush.y *= physics.friction;
         vx += jetpackPush.x;
         vy += jetpackPush.y;
+
+        jetpackFuel -= 1;
+    } else {
+        if (jetpackFuel < JETPACK_FUEL_FULL && !mouse.rightClick) {
+            jetpackFuel += 1;
+        }
     }
+    console.log("jet fuel: " + jetpackFuel)
 
     //gravity
     vx += physics.gravity * dt * gravityVec.x;
