@@ -1,8 +1,14 @@
 const path = require('path');
 
+console.log("webpack dev");
+
 module.exports = {
     entry: './src/main.js',
-    mode: 'production',
+    mode: 'development',
+    devServer: {
+        contentBase: './dist',
+        watchContentBase: true
+    },
     output: {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'dist'),

@@ -5,8 +5,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "client": "cd client && npm start",
+    "client-dev": "cd client && npm run dev",
     "server": "cd server && node server.js",
-    "start": "npm-run-all -p server client"
+    "start": "npm-run-all -p server client",
+    "dev": "npm-run-all -p server client-dev"
   },
   "repository": {
     "type": "git",
