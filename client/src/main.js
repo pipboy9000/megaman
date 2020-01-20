@@ -3,6 +3,10 @@ import * as projectiles from './projectiles.js';
 import * as level from "./level.js";
 import * as canvas from './canvas.js';
 
+import io from 'socket.io-client/dist/socket.io';
+
+const socket = io('http://localhost:3000');
+
 let lastFrame = performance.now();
 
 function gameLoop(time) {

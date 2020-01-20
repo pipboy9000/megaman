@@ -5,6 +5,10 @@ import * as projectiles from './projectiles.js';
 import * as level from './level.js';
 import * as lines from './lines.js';
 
+//sprites
+import SpritesheetLeft from './assets/spritesheet_left.png';
+import SpritesheetRight from './assets/spritesheet_right.png';
+
 
 var animationCounter = 0;
 var width = 40;
@@ -54,8 +58,8 @@ function makeImage(src) {
 
 function createSprites() {
     let result = {};
-    result[direction.LEFT] = makeImage("spritesheet_left.png");
-    result[direction.RIGHT] = makeImage("spritesheet_right.png");
+    result[direction.LEFT] = makeImage(SpritesheetLeft);
+    result[direction.RIGHT] = makeImage(SpritesheetRight);
     return result;
 }
 
