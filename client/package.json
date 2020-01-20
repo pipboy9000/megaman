@@ -15,11 +15,11 @@
     "webpack-dev-server": "^3.10.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack && copy-index",
     "copy-index": "copy src\\index.html dist\\index.html",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
     "webpack-dev-server": "webpack-dev-server --config webpack.config-dev.js --open",
-    "dev": "npm-run-all -s copy-index webpack-dev-server",
+    "dev": "npm-run-all -s build copy-index webpack-dev-server",
     "start": "cd dist && live-server"
   },
   "author": "",
