@@ -1,10 +1,12 @@
-import * as megaman from './megaman.js';
+import { Megaman } from './megaman.js';
 import * as projectiles from './projectiles.js';
 import * as level from "./level.js";
 import * as canvas from './canvas.js';
 import * as network from './network.js';
 
 let lastFrame = performance.now();
+
+let player = new Megaman();
 
 function gameLoop(time) {
     // Calculate delta time
@@ -17,19 +19,20 @@ function gameLoop(time) {
     //camera
     canvas.draw();
 
-    megaman.move(1);
+    player.move(1);
     projectiles.move(1);
 
     canvas.clearCanvas();
 
-    megaman.draw();
+    player.draw();
     projectiles.draw();
     level.draw();
 
     window.requestAnimationFrame(gameLoop);
 }
 
-function init() {
+async function init() {
+    await network.init();
     gameLoop(lastFrame);
 }
 

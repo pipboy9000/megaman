@@ -17,6 +17,8 @@ export function translate(dx, dy) {
     mouse.y += dy;
 }
 
+// let inputUpdateEvent = new Event("inputUpdate")
+
 function onMouseMove(e) {
 
     let rect = canvas.getBoundingClientRect();

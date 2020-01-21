@@ -4,7 +4,8 @@ var io = require('socket.io')(http);
 var ntp = require('socket-ntp');
 
 io.on('connection', function (socket) {
-    console.log('a user connected');
+
+    console.log('a user connected:  ' + socket.handshake.address);
     ntp.sync(socket);
 
     socket.on("test", function (data) {
