@@ -10,47 +10,10 @@ import SpritesheetLeft from './assets/spritesheet_left.png';
 import SpritesheetRight from './assets/spritesheet_right.png';
 
 export class Megaman {
-    constructor(input) {
+    constructor(player, input) {
+        this.player = player;
         this.input = input;
-        this.animationCounter = 0;
-        this.width = 40;
-        this.height = 46;
-        this.spriteDirection = direction.RIGHT;
-        this.x = 300;
-        this.y = 300;
-        this.vx = 0;
-        this.vy = 0;
-        this.canJump = false;
-        this.aim = 0;
-        this.gunOffsetX = 30;
-        this.gunOffsetY = 30;
-        this.recoil = 0;
-        this.jetpackPush = { x: 0, y: 0 }
-        this.jetpackFuel = 100;
-
         this.sprites = this.createSprites();
-        this.NUM_SPRITES_STANDING = 3;
-        this.NUM_SPRITES_RUNNING = 11;
-        this.NUM_SPRITES_JUMPING = 7;
-        this.ANIMATION_SPEED = 15; // How much vx it takes to go to the next frame
-
-        this.RECOIL_TIME = 3;
-
-        this.JETPACK_VEC = { x: 0, y: -0.3 };
-        this.JETPACK_MAX = 1.3;
-        this.JETPACK_FUEL_FULL = 100;
-
-        this.physics = {
-            acceleration: 1.5,
-            friction: 0.8,
-            gravity: 1,
-            initialJumpSpeed: -15
-        };
-
-        //collision circle
-        this.colRad = 20;
-        this.colOffsetX = 20;
-        this.colOffsetY = 30;
     }
 
     makeImage(src) {
@@ -67,50 +30,53 @@ export class Megaman {
     }
 
     draw() {
+        let { player, physics } = { player: this.player, physics: this.player.physics }
+        let { keyboard, mouse, direction } = { keyboard: this.input.keyboard, mouse: this.input.mouse, direction: this.input.direction };
+
         let row, column; // of the relevant sprite in the spritesheet
         // Row 0: standing, row 1: running, row 2: jumping
 
         // Calculate row/column + update animationCounter if applicable
-        if (this.canJump) {
+        if (player.canJump) {
             // player is on the ground
             let numSprites;
             if (keyboard[direction.LEFT] || keyboard[direction.RIGHT]) {
                 // running
-                this.animationCounter += Math.abs(this.vx);
+                player.animationCounter += Math.abs(player.vx);
                 row = 1;
-                numSprites = this.NUM_SPRITES_RUNNING;
+                numSprites = player.NUM_SPRITES_RUNNING;
             } else {
                 // standing
-                this.animationCounter++;
+                player.animationCounter++;
                 row = 0;
-                this.numSprites = this.NUM_SPRITES_STANDING;
+                player.numSprites = player.NUM_SPRITES_STANDING;
             }
             column = Math.floor(
-                this.animationCounter / this.ANIMATION_SPEED % this.numSprites
+                player.animationCounter / player.ANIMATION_SPEED % player.numSprites
             );
         } else {
             // player is in the air
             row = 2;
             column = Math.min(
                 Math.floor(
-                    (this.vy - this.physics.initialJumpSpeed) /
-                    (-2 * this.physics.initialJumpSpeed / this.NUM_SPRITES_JUMPING)
+                    (player.vy - physics.initialJumpSpeed) /
+                    (-2 * physics.initialJumpSpeed / player.NUM_SPRITES_JUMPING)
                 ),
-                this.NUM_SPRITES_JUMPING - 1
+                player.NUM_SPRITES_JUMPING - 1
             );
         }
 
         // Draw
         ctx.drawImage(
-            this.sprites[this.spriteDirection],
-            column * this.width,
-            row * this.height,
-            this.width,
-            this.height,
-            this.x,
-            this.y,
-            this.width,
-            this.height
+            player.sprites[player.spriteDirection],
+            column * player.width,
+            row * player.height,
+            player.width,
+            player.height,
+            player.x,
+            player.y,
+            player.width,
+            player.height
         );
 
         //draw aim
@@ -138,21 +104,23 @@ export class Megaman {
     }
 
     move(dt) {
+        let { player, physics } = { player: this.player, physics: this.player.physics }
+        let { keyboard, mouse, direction } = { keyboard: this.input.keyboard, mouse: this.input.mouse, direction: this.input.direction };
 
         // gravity
         let gravityVec = { x: 0.0001, y: 1 }; //i dunno why but if x is zero then colCheck fails sometimes
 
         // Choose sprite (don't care what happens if both left and right are pressed)
         if (keyboard[direction.RIGHT]) {
-            this.spriteDirection = direction.RIGHT;
+            player.spriteDirection = direction.RIGHT;
         } else if (keyboard[direction.LEFT]) {
-            this.spriteDirection = direction.LEFT;
+            player.spriteDirection = direction.LEFT;
         }
 
         // Jump
-        if (keyboard[direction.UP] && this.canJump) {
-            this.canJump = false;
-            this.vy = this.physics.initialJumpSpeed;
+        if (keyboard[direction.UP] && player.canJump) {
+            player.canJump = false;
+            player.vy = physics.initialJumpSpeed;
         }
 
         // Add acceleration
@@ -182,11 +150,11 @@ export class Megaman {
         }
 
         //gravity
-        this.vx += this.physics.gravity * dt * gravityVec.x;
-        this.vy += this.physics.gravity * dt * gravityVec.y;
+        player.vx += physics.gravity * dt * gravityVec.x;
+        player.vy += physics.gravity * dt * gravityVec.y;
 
         //friction
-        this.vx *= this.physics.friction;
+        player.vx *= physics.friction;
 
         //limit overall movement for 1 frame
         let maxMove = this.colRad;

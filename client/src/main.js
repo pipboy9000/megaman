@@ -1,4 +1,4 @@
-import { Megaman } from './megaman.js';
+import { getPlayer } from './player.js';
 import * as projectiles from './projectiles.js';
 import * as level from "./level.js";
 import * as canvas from './canvas.js';
@@ -6,7 +6,7 @@ import * as network from './network.js';
 
 let lastFrame = performance.now();
 
-let player = new Megaman();
+let player = getPlayer();
 
 function gameLoop(time) {
     // Calculate delta time
