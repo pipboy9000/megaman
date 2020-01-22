@@ -10,7 +10,8 @@ import SpritesheetLeft from './assets/spritesheet_left.png';
 import SpritesheetRight from './assets/spritesheet_right.png';
 
 export class Megaman {
-    constructor() {
+    constructor(input) {
+        this.input = input;
         this.animationCounter = 0;
         this.width = 40;
         this.height = 46;
@@ -47,9 +48,9 @@ export class Megaman {
         };
 
         //collision circle
-        this.colRad = 25;
+        this.colRad = 20;
         this.colOffsetX = 20;
-        this.colOffsetY = 20;
+        this.colOffsetY = 30;
     }
 
     makeImage(src) {
@@ -159,17 +160,17 @@ export class Megaman {
         this.vx -= keyboard[direction.LEFT] ? this.physics.acceleration * dt : 0;
 
         //jet pack
-        if (mouse.rightClick && jetpackFuel > 0) {
-            canJump = false;
-            this.jetpackPush.x += mouse.rightClick ? JETPACK_VEC.x * dt : 0;
-            this.jetpackPush.y += mouse.rightClick ? JETPACK_VEC.y * dt : 0;
-            if (lines.getLength(this.jetpackPush) >= JETPACK_MAX) {
+        if (mouse.rightClick && this.jetpackFuel > 0) {
+            this.canJump = false;
+            this.jetpackPush.x += mouse.rightClick ? this.JETPACK_VEC.x * dt : 0;
+            this.jetpackPush.y += mouse.rightClick ? this.JETPACK_VEC.y * dt : 0;
+            if (lines.getLength(this.jetpackPush) >= this.JETPACK_MAX) {
                 this.jetpackPush = lines.normalize(this.jetpackPush);
-                this.jetpackPush.x *= JETPACK_MAX;
-                this.jetpackPush.y *= JETPACK_MAX;
+                this.jetpackPush.x *= this.JETPACK_MAX;
+                this.jetpackPush.y *= this.JETPACK_MAX;
             }
-            this.jetpackPush.x *= physics.friction;
-            this.jetpackPush.y *= physics.friction;
+            this.jetpackPush.x *= this.physics.friction;
+            this.jetpackPush.y *= this.physics.friction;
             this.vx += this.jetpackPush.x;
             this.vy += this.jetpackPush.y;
 
