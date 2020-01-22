@@ -7,18 +7,19 @@ const socket = io('http://localhost:3000');
 
 export var serverTimeOffset;
 
-export var fingerprint;
+export var fp;
 
 export async function init() {
     ntp.init(socket);
     serverTimeOffset = ntp.offset();
-    fingerprint = await getFingerprint();
+    fp = await getFingerprint();
     socket.on("setState", update);
+    EventBus.addEventListener("input_update", update)
     return Promise.resolve();
 }
 
-function update(data) {
-    socket.emit("update", data);
+function update(player, input) {
+    socket.emit("update", { player, input });
 }
 
 function setState(data) {

@@ -6,7 +6,7 @@ import * as network from './network.js';
 
 let lastFrame = performance.now();
 
-let player = getPlayer();
+let player;
 
 function gameLoop(time) {
     // Calculate delta time
@@ -32,6 +32,7 @@ function gameLoop(time) {
 }
 
 async function init() {
+    player = getPlayer();
     await network.init();
     gameLoop(lastFrame);
 }

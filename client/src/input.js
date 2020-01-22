@@ -1,4 +1,5 @@
 import { camPosX, camPosY, halfWidth, halfHeight } from './canvas.js';
+import EventBus from 'eventbusjs';
 
 export const mouse = {
     x: 0, y: 0, dx: 0, dy: 0, leftClick: false, rightClick: false, screenX: 0, screenY: 0
