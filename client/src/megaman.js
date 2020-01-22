@@ -13,7 +13,7 @@ export class Megaman {
     constructor(player, input) {
         this.player = player;
         this.input = input;
-        this.sprites = this.createSprites();
+        player.sprites = this.createSprites();
     }
 
     makeImage(src) {
@@ -93,13 +93,13 @@ export class Megaman {
         ctx.lineWidth = 2;
 
         ctx.beginPath();
-        ctx.arc(this.x + this.colOffsetX, this.y + this.colOffsetY, this.colRad, 0, Math.PI * 2);
+        ctx.arc(player.x + player.colOffsetX, player.y + player.colOffsetY, player.colRad, 0, Math.PI * 2);
         ctx.stroke();
 
         //fuel line
         ctx.beginPath();
         ctx.fillStyle = "red";
-        ctx.rect(this.x + 5, this.y + 50, this.jetpackFuel / 2, 5);
+        ctx.rect(player.x + 5, player.y + 50, player.jetpackFuel / 2, 5);
         ctx.fill();
     }
 
@@ -124,28 +124,28 @@ export class Megaman {
         }
 
         // Add acceleration
-        this.vx += keyboard[direction.RIGHT] ? this.physics.acceleration * dt : 0;
-        this.vx -= keyboard[direction.LEFT] ? this.physics.acceleration * dt : 0;
+        player.vx += keyboard[direction.RIGHT] ? physics.acceleration * dt : 0;
+        player.vx -= keyboard[direction.LEFT] ? physics.acceleration * dt : 0;
 
         //jet pack
-        if (mouse.rightClick && this.jetpackFuel > 0) {
-            this.canJump = false;
-            this.jetpackPush.x += mouse.rightClick ? this.JETPACK_VEC.x * dt : 0;
-            this.jetpackPush.y += mouse.rightClick ? this.JETPACK_VEC.y * dt : 0;
-            if (lines.getLength(this.jetpackPush) >= this.JETPACK_MAX) {
-                this.jetpackPush = lines.normalize(this.jetpackPush);
-                this.jetpackPush.x *= this.JETPACK_MAX;
-                this.jetpackPush.y *= this.JETPACK_MAX;
+        if (mouse.rightClick && player.jetpackFuel > 0) {
+            player.canJump = false;
+            player.jetpackPush.x += mouse.rightClick ? player.JETPACK_VEC.x * dt : 0;
+            player.jetpackPush.y += mouse.rightClick ? player.JETPACK_VEC.y * dt : 0;
+            if (lines.getLength(player.jetpackPush) >= player.JETPACK_MAX) {
+                player.jetpackPush = lines.normalize(player.jetpackPush);
+                player.jetpackPush.x *= player.JETPACK_MAX;
+                player.jetpackPush.y *= player.JETPACK_MAX;
             }
-            this.jetpackPush.x *= this.physics.friction;
-            this.jetpackPush.y *= this.physics.friction;
-            this.vx += this.jetpackPush.x;
-            this.vy += this.jetpackPush.y;
+            player.jetpackPush.x *= player.physics.friction;
+            player.jetpackPush.y *= player.physics.friction;
+            player.vx += player.jetpackPush.x;
+            player.vy += player.jetpackPush.y;
 
-            this.jetpackFuel -= 1;
+            player.jetpackFuel -= 1;
         } else {
-            if (this.jetpackFuel < this.JETPACK_FUEL_FULL && !mouse.rightClick) {
-                this.jetpackFuel += 1;
+            if (player.jetpackFuel < player.JETPACK_FUEL_FULL && !mouse.rightClick) {
+                player.jetpackFuel += 1;
             }
         }
 
@@ -157,57 +157,57 @@ export class Megaman {
         player.vx *= physics.friction;
 
         //limit overall movement for 1 frame
-        let maxMove = this.colRad;
-        if (lines.getLength({ x: this.vx, y: this.vy }) > maxMove) {
-            let nv = lines.normalize({ x: this.vx, y: this.vy });
-            this.vx = nv.x * maxMove;
-            this.vy = nv.y * maxMove;
+        let maxMove = player.colRad;
+        if (lines.getLength({ x: player.vx, y: player.vy }) > maxMove) {
+            let nv = lines.normalize({ x: player.vx, y: player.vy });
+            player.vx = nv.x * maxMove;
+            player.vy = nv.y * maxMove;
         }
 
         // Move
-        this.y += this.vy;
-        this.x += this.vx;
+        player.y += player.vy;
+        player.x += player.vx;
 
-        let vLength = lines.getLength({ x: this.vx, y: this.vy });
+        let vLength = lines.getLength({ x: player.vx, y: player.vy });
 
         //check wall collision
-        let newX = this.x;
-        let newY = this.y;
+        let newX = player.x;
+        let newY = player.y;
 
         // canJump = false;
 
-        let moveBack = level.checkCol(this.x + this.colOffsetX, this.y + this.colOffsetY, this.colRad, gravityVec);
+        let moveBack = level.checkCol(player.x + player.colOffsetX, player.y + player.colOffsetY, player.colRad, gravityVec);
         let iterations = 0;
         while (moveBack && (moveBack.x != 0 || moveBack.y != 0) && iterations < 30) {
 
             iterations++;
 
-            this.x += moveBack.x;
-            this.y += moveBack.y;
+            player.x += moveBack.x;
+            player.y += moveBack.y;
 
             if (moveBack.isFloor) {
-                this.vy = 0;
-                this.canJump = true;
+                player.vy = 0;
+                player.canJump = true;
             }
 
-            moveBack = level.checkCol(this.x + this.colOffsetX, this.y + this.colOffsetY, this.colRad, gravityVec);
+            moveBack = level.checkCol(player.x + player.colOffsetX, player.y + player.colOffsetY, player.colRad, gravityVec);
         }
 
         // x = newX;
         // y = newY;
 
         //zoom center
-        canvas.center(this.x, this.y);
+        canvas.center(player.x, player.y);
 
         //mouse aim
-        this.aim = Math.atan2(mouse.y - (this.y + this.gunOffsetY), mouse.x - (this.x + this.gunOffsetX));
+        player.aim = Math.atan2(mouse.y - (player.y + player.gunOffsetY), mouse.x - (player.x + player.gunOffsetX));
 
         //shoot
-        if (mouse.leftClick && this.recoil <= 0) {
-            projectiles.shootLaser(this.x + this.gunOffsetX, this.y + this.gunOffsetY, this.aim);
-            this.recoil = this.RECOIL_TIME;
+        if (mouse.leftClick && player.recoil <= 0) {
+            projectiles.shootLaser(player.x + player.gunOffsetX, player.y + player.gunOffsetY, player.aim);
+            player.recoil = player.RECOIL_TIME;
         } else {
-            this.recoil -= 1
+            player.recoil -= 1
         }
     }
 }
