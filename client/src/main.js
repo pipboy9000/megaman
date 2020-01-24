@@ -14,8 +14,8 @@ function gameLoop(time) {
     lastFrame = time;
 
     // Normalize
-    // dt /= 16;
-    dt = 1;
+    dt /= 16;
+    // dt = 1;
 
     //camera
     canvas.draw(dt);

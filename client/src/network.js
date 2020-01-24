@@ -29,6 +29,7 @@ function updatePlayer(event) {
 }
 
 function setPlayer(p) {
+    if (p.fp === fp) return;
     if (!players[p.fp]) {
         players[p.fp] = new Megaman(p.player, p.input);
     } else {

@@ -10,7 +10,8 @@ io.on('connection', function (socket) {
     ntp.sync(socket);
 
     socket.on("update_player", function (player) {
-        io.emit("set_player", player);
+        // sending to all clients except sender
+        socket.broadcast.emit("set_player", player);
     })
 });
 
