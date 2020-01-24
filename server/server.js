@@ -1,7 +1,12 @@
-var app = require('express')();
-var http = require('http').createServer(app);
+const express = require('express');
+var app = express();
+var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var ntp = require('socket-ntp');
+
+app.use(express.static('public'))
+
+var port = process.env.PORT || 3000;
 
 io.on('connection', function (socket) {
 
@@ -15,6 +20,6 @@ io.on('connection', function (socket) {
     })
 });
 
-http.listen(3000, function () {
+http.listen(port, function () {
     console.log('listening on *:3000');
 });

@@ -4,7 +4,13 @@ import { getFingerprint } from './fingerprint.js';
 import EventBus from 'eventbusjs';
 import { Megaman } from './megaman.js';
 
-const socket = io('http://localhost:3000');
+var socket;
+
+if (process.env.NODE_ENV == 'production') {
+    socket = io();
+} else {
+    socket = io("localhost:3000");
+}
 
 export let serverTimeOffset;
 
@@ -22,7 +28,6 @@ export async function init() {
 }
 
 function updatePlayer(event) {
-    console.log("update")
     socket.emit("update_player", { player: event.target.player, input: event.target.input, fp });
 }
 
