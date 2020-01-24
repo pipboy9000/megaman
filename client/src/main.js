@@ -18,6 +18,7 @@ function gameLoop(time) {
     // dt = 1;
 
     //camera
+    canvas.center(player.player.x, player.player.y);
     canvas.draw(dt);
 
     player.move(dt);

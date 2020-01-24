@@ -1,9 +1,10 @@
 import { Megaman } from './megaman.js';
 import { mouse, keyboard, direction } from './input.js';
 import EventBus from 'eventbusjs';
-import network from './network.js';
+import * as canvas from './canvas.js';
 
-EventBus.addEventListener('keyboard_update', updatePlayer)
+EventBus.addEventListener('keyboard_update', updatePlayer);
+EventBus.addEventListener('mouse_click', updatePlayer);
 
 let input = { mouse, keyboard, direction }
 

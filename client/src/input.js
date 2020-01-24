@@ -46,6 +46,7 @@ function onMouseDown(event) {
             mouse.rightClick = true;
             break;
     }
+    EventBus.dispatch('mouse_click');
 }
 
 function onMouseUp(event) {
@@ -58,6 +59,7 @@ function onMouseUp(event) {
             // event.preventDefault();
             break;
     }
+    EventBus.dispatch('mouse_click');
 }
 
 function onRightClick(event) {
@@ -88,9 +90,6 @@ function keyEventToDirection(event) {
 function keyHandler(event) {
     let direction = keyEventToDirection(event);
     if (direction) {
-        if (event.type === "keyup") {
-            debugger;
-        }
         keyboard[direction] = event.type === "keydown";
     }
     EventBus.dispatch('keyboard_update');

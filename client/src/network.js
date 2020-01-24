@@ -10,8 +10,6 @@ export let serverTimeOffset;
 
 export let fp;
 
-let df = 0; // delta frame, when getting an update from the server 
-
 let players = {};
 
 export async function init() {
