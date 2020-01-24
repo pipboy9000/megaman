@@ -1,5 +1,9 @@
 import { Megaman } from './megaman.js';
 import { mouse, keyboard, direction } from './input.js';
+import EventBus from 'eventbusjs';
+import network from './network.js';
+
+EventBus.addEventListener('keyboard_update', updatePlayer)
 
 let input = { mouse, keyboard, direction }
 
@@ -25,4 +29,8 @@ export function getPlayer() {
 
 export function getState() {
     return { player, input }
+}
+
+function updatePlayer() {
+    EventBus.dispatch("update_player", { player, input });
 }

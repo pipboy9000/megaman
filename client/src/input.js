@@ -1,4 +1,5 @@
 import { camPosX, camPosY, halfWidth, halfHeight } from './canvas.js';
+
 import EventBus from 'eventbusjs';
 
 export const mouse = {
@@ -43,8 +44,6 @@ function onMouseDown(event) {
             break;
         case 3:
             mouse.rightClick = true;
-            // event.preventDefault();
-            // return false;
             break;
     }
 }
@@ -89,8 +88,12 @@ function keyEventToDirection(event) {
 function keyHandler(event) {
     let direction = keyEventToDirection(event);
     if (direction) {
+        if (event.type === "keyup") {
+            debugger;
+        }
         keyboard[direction] = event.type === "keydown";
     }
+    EventBus.dispatch('keyboard_update');
 }
 
 function init() {

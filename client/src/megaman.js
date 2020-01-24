@@ -43,6 +43,11 @@ export class Megaman {
         this.sprites = this.createSprites();
     }
 
+    setData(player, input, df) {
+        this.player = player;
+        this.input = input;
+    }
+
     makeImage(src) {
         let result = new Image();
         result.src = src;
@@ -163,8 +168,8 @@ export class Megaman {
                 player.jetpackPush.x *= JETPACK_MAX;
                 player.jetpackPush.y *= JETPACK_MAX;
             }
-            player.jetpackPush.x *= player.physics.friction;
-            player.jetpackPush.y *= player.physics.friction;
+            player.jetpackPush.x *= physics.friction;
+            player.jetpackPush.y *= physics.friction;
             player.vx += player.jetpackPush.x;
             player.vy += player.jetpackPush.y;
 
@@ -221,9 +226,6 @@ export class Megaman {
 
         // x = newX;
         // y = newY;
-
-        //zoom center
-        canvas.center(player.x, player.y);
 
         //mouse aim
         player.aim = Math.atan2(mouse.y - (player.y + gunOffsetY), mouse.x - (player.x + gunOffsetX));

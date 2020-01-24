@@ -14,19 +14,23 @@ function gameLoop(time) {
     lastFrame = time;
 
     // Normalize
-    dt /= 16;
+    // dt /= 16;
+    dt = 1;
 
     //camera
-    canvas.draw();
+    canvas.draw(dt);
 
-    player.move(1);
-    projectiles.move(1);
+    player.move(dt);
+    projectiles.move(dt);
+    network.move(dt)
+
 
     canvas.clearCanvas();
 
     player.draw();
     projectiles.draw();
     level.draw();
+    network.draw();
 
     window.requestAnimationFrame(gameLoop);
 }

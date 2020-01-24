@@ -2,26 +2,50 @@ import io from 'socket.io-client/dist/socket.io';
 import ntp from 'socket-ntp/client/ntp';
 import { getFingerprint } from './fingerprint.js';
 import EventBus from 'eventbusjs';
+import { Megaman } from './megaman.js';
 
 const socket = io('http://localhost:3000');
 
-export var serverTimeOffset;
+export let serverTimeOffset;
 
-export var fp;
+export let fp;
+
+let df = 0; // delta frame, when getting an update from the server 
+
+let players = {};
 
 export async function init() {
     ntp.init(socket);
     serverTimeOffset = ntp.offset();
     fp = await getFingerprint();
-    socket.on("setState", update);
-    EventBus.addEventListener("input_update", update)
+    socket.on("set_player", setPlayer);
+    EventBus.addEventListener("update_player", updatePlayer)
     return Promise.resolve();
 }
 
-function update(player, input) {
-    socket.emit("update", { player, input });
+function updatePlayer(event) {
+    console.log("update")
+    socket.emit("update_player", { player: event.target.player, input: event.target.input, fp });
 }
 
-function setState(data) {
-    console.log(data);
+function setPlayer(p) {
+    if (!players[p.fp]) {
+        players[p.fp] = new Megaman(p.player, p.input);
+    } else {
+        Object.keys(players).forEach(fp => {
+            players[fp].setData(p.player, p.input);
+        })
+    }
+}
+
+export function move(dt) {
+    Object.keys(players).forEach(fp => {
+        players[fp].move(dt);
+    })
+}
+
+export function draw(dt) {
+    Object.keys(players).forEach(fp => {
+        players[fp].draw(dt);
+    })
 }

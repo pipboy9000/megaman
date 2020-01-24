@@ -5,10 +5,10 @@ export var ctx, canvas;
 export var width, height, halfWidth, halfHeight;
 
 export var camPosX = 300;
-var targetCamPosX = 0;
+var targetCamPosX = 300;
 
 export var camPosY = 450;
-var targetCamPosY = 0;
+var targetCamPosY = 450;
 
 export function clearCanvas() {
     ctx.fillStyle = "black";

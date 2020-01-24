@@ -5,11 +5,12 @@ var ntp = require('socket-ntp');
 
 io.on('connection', function (socket) {
 
-    console.log('a user connected:  ' + socket.handshake.address);
+    console.log('a user connected');
+
     ntp.sync(socket);
 
-    socket.on("test", function (data) {
-        console.log(data);
+    socket.on("update_player", function (player) {
+        io.emit("set_player", player);
     })
 });
 
