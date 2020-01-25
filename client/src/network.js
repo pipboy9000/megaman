@@ -7,7 +7,7 @@ import { Megaman } from './megaman.js';
 var socket;
 
 if (process.env.NODE_ENV == 'production') {
-    socket = io();
+    socket = io("https://megaman-online.herokuapp.com/");
 } else {
     socket = io("localhost:3000");
 }
