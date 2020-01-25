@@ -4,13 +4,7 @@ import { getFingerprint } from './fingerprint.js';
 import EventBus from 'eventbusjs';
 import { Megaman } from './megaman.js';
 
-var socket;
-
-if (process.env.NODE_ENV == 'production') {
-    socket = io("https://megaman-online.herokuapp.com/");
-} else {
-    socket = io("localhost:3000");
-}
+var socket = io("https://megaman-online.herokuapp.com/");
 
 export let serverTimeOffset;
 
